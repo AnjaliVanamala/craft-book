@@ -55,12 +55,12 @@ body {
 .instructions {
     margin-bottom: 25px;
 
+    min-height: 24px;
+
     font-size: 16px;
     font-weight: 600;
 
     color: #6d5546;
-
-    min-height: 24px;
 
     text-align: center;
 }
@@ -70,9 +70,21 @@ body {
    BOOK
 ========================================================= */
 
+/*
+    Larger than before.
+
+    The book maintains roughly a 1.52 : 1 ratio while
+    automatically shrinking to fit smaller screens.
+*/
+
 .book {
-    width: 760px;
-    height: 500px;
+    width: min(
+        1000px,
+        88vw,
+        calc(70vh * 1.52)
+    );
+
+    aspect-ratio: 1.52 / 1;
 
     position: relative;
 
@@ -87,16 +99,9 @@ body {
 }
 
 
-/*
-    Each sheet is HALF the width of the complete book.
-
-    When closed:
-        sheet sits on the RIGHT side.
-
-    When flipped:
-        it rotates around its LEFT edge
-        and moves visually to the LEFT side.
-*/
+/* =========================================================
+   SHEETS
+========================================================= */
 
 .sheet {
     position: absolute;
@@ -115,6 +120,11 @@ body {
         transform 1s cubic-bezier(.65, .05, .36, 1);
 
     cursor: pointer;
+
+    /*
+        Prevents accidental clicks during animation.
+    */
+    pointer-events: auto;
 }
 
 
@@ -139,11 +149,8 @@ body {
 
 
 /*
-    The back face starts turned around.
-
-    When the sheet itself rotates -180 degrees,
-    the two rotations cancel out and the backside
-    appears correctly on the left.
+    The backside contains the page that should appear
+    after the sheet is turned.
 */
 
 .back-face {
@@ -166,7 +173,7 @@ body {
 
     color: #493c36;
 
-    padding: 35px;
+    padding: 42px;
 
     overflow: hidden;
 
@@ -176,10 +183,6 @@ body {
         inset 8px 0 12px rgba(70, 50, 40, .04);
 }
 
-
-/*
-    The left-facing pages get the opposite edge treatment.
-*/
 
 .back-face.paper {
     border-radius: 8px 0 0 8px;
@@ -224,7 +227,7 @@ h2 {
 }
 
 h1 {
-    font-size: 55px;
+    font-size: 62px;
 
     line-height: .9;
 
@@ -232,18 +235,18 @@ h1 {
 }
 
 h2 {
-    font-size: 34px;
+    font-size: 38px;
 
     margin-top: 0;
 
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 }
 
 h3 {
-    font-size: 20px;
+    font-size: 22px;
 
-    margin-top: 15px;
-    margin-bottom: 8px;
+    margin-top: 18px;
+    margin-bottom: 9px;
 }
 
 p {
@@ -295,23 +298,23 @@ p {
 .small-text {
     letter-spacing: 5px;
 
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .cover p {
-    font-size: 15px;
+    font-size: 16px;
 }
 
 .flower {
-    font-size: 42px;
+    font-size: 48px;
 }
 
 .cover h2 {
-    font-size: 45px;
+    font-size: 48px;
 }
 
 .big-doodle {
-    font-size: 50px;
+    font-size: 55px;
 
     text-align: center;
 
@@ -325,17 +328,31 @@ p {
 
 .sheet.flipped {
     transform: rotateY(-180deg);
+
+    /*
+        Turned pages remain above the unopened stack.
+    */
+    z-index: 20;
 }
 
 
 /*
     IMPORTANT:
 
-    The first sheet must be above everything.
-    The second sheet must be below it, etc.
+    During a backwards turn, we KEEP the sheet at z-index 20.
 
-    This gives us a real physical stack.
+    This prevents the sheet underneath from suddenly appearing
+    before the reverse animation is complete.
 */
+
+.sheet.turning-back {
+    z-index: 20;
+}
+
+
+/* =========================================================
+   STACKING ORDER
+========================================================= */
 
 .sheet[data-sheet="0"] {
     z-index: 9;
@@ -371,19 +388,6 @@ p {
 
 .sheet[data-sheet="8"] {
     z-index: 1;
-}
-
-
-/*
-    Once a sheet is flipped, it needs to remain above
-    the sheets that are still closed.
-
-    This allows the turned pages to stack naturally
-    on the left side.
-*/
-
-.sheet.flipped {
-    z-index: 20;
 }
 
 
@@ -425,7 +429,7 @@ ol {
 ========================================================= */
 
 .photo-placeholder {
-    height: 135px;
+    height: 150px;
 
     background: #eadfd1;
 
@@ -446,7 +450,7 @@ ol {
 }
 
 .photo-placeholder span {
-    font-size: 35px;
+    font-size: 38px;
 }
 
 .photo-placeholder p {
@@ -471,7 +475,7 @@ ol {
 button {
     border: none;
 
-    padding: 11px 22px;
+    padding: 12px 24px;
 
     border-radius: 25px;
 
@@ -513,9 +517,9 @@ button:disabled {
     .book {
         width: 92vw;
 
-        height: 62vw;
+        aspect-ratio: 1.52 / 1;
 
-        max-height: 500px;
+        max-height: none;
     }
 
     .instructions {
@@ -637,7 +641,7 @@ button:disabled {
     .book {
         width: 94vw;
 
-        height: 68vw;
+        aspect-ratio: 1.52 / 1;
     }
 
     .paper {
