@@ -6,34 +6,76 @@ const instructions = document.getElementById("instructions");
 let currentSheet = 0;
 let isAnimating = false;
 
-const TURN_DURATION = 1000;
 
+/* =========================================================
+   STACKING
+========================================================= */
 
-/* --------------------------------
-   STACK MANAGEMENT
--------------------------------- */
+/*
+    Unturned sheets sit on top of turned sheets.
 
-function setNormalStack() {
+    Example after opening:
+
+        Sheet 2   ← highest
+        Sheet 3
+        Sheet 4
+        ...
+        Sheet 1   ← lowest because it has been turned
+
+    This is what makes the book behave like a real stack
+    of physical sheets.
+*/
+
+function updateStack() {
+
+    const base = sheets.length * 2;
+
     sheets.forEach((sheet, index) => {
-        // First sheet is highest, last sheet is lowest.
-        sheet.style.zIndex = sheets.length - index;
+
+        if (sheet.classList.contains("flipped")) {
+
+            /*
+                Turned sheets go toward the bottom.
+            */
+            sheet.style.zIndex = index + 1;
+
+        } else {
+
+            /*
+                Unturned sheets stay above turned sheets.
+
+                Earlier unturned sheets are slightly higher
+                than later ones.
+            */
+            sheet.style.zIndex = base - index;
+        }
+
     });
 }
 
 
-/* --------------------------------
+/* =========================================================
    UI
--------------------------------- */
+========================================================= */
 
 function updateBook() {
+
     if (currentSheet === 0) {
-        instructions.textContent = "Click the book to open it ✨";
+
+        instructions.textContent =
+            "Click the book to open it ✨";
+
     } else if (currentSheet === sheets.length) {
-        instructions.textContent = "You've reached the end! 💕";
+
+        instructions.textContent =
+            "You've reached the end! 💕";
+
     } else {
+
         instructions.textContent =
             "Click a page or use the buttons to turn it ✨";
     }
+
 
     prevButton.disabled =
         currentSheet === 0 || isAnimating;
@@ -43,11 +85,39 @@ function updateBook() {
 }
 
 
-/* --------------------------------
+/* =========================================================
+   FINISH ANIMATION
+========================================================= */
+
+function waitForTurnToFinish(sheet, callback) {
+
+    function finished(event) {
+
+        if (event.propertyName !== "transform") {
+            return;
+        }
+
+        sheet.removeEventListener(
+            "transitionend",
+            finished
+        );
+
+        callback();
+    }
+
+    sheet.addEventListener(
+        "transitionend",
+        finished
+    );
+}
+
+
+/* =========================================================
    NEXT PAGE
--------------------------------- */
+========================================================= */
 
 function nextPage() {
+
     if (
         currentSheet >= sheets.length ||
         isAnimating
@@ -55,57 +125,53 @@ function nextPage() {
         return;
     }
 
+
     isAnimating = true;
     updateBook();
 
+
     const sheet = sheets[currentSheet];
 
-    /*
-        Put the sheet being turned above EVERYTHING.
 
-        This is important because it prevents the next
-        sheet from appearing through it during the turn.
+    /*
+        While this sheet is physically turning,
+        it needs to be above everything.
     */
     sheet.style.zIndex = 100;
 
+
+    /*
+        Turn the sheet.
+    */
     sheet.classList.add("flipped");
+
 
     currentSheet++;
 
+
     /*
-        Wait for the ACTUAL CSS transition instead of
-        guessing with setTimeout.
+        IMPORTANT:
+
+        Don't change its z-index until the animation
+        has completely finished.
     */
-    const finishForward = (event) => {
-        if (event.propertyName !== "transform") return;
+    waitForTurnToFinish(sheet, () => {
 
-        sheet.removeEventListener(
-            "transitionend",
-            finishForward
-        );
-
-        /*
-            Once the turn is finished, put the sheet back
-            into its normal stack position.
-        */
-        setNormalStack();
+        updateStack();
 
         isAnimating = false;
-        updateBook();
-    };
 
-    sheet.addEventListener(
-        "transitionend",
-        finishForward
-    );
+        updateBook();
+    });
 }
 
 
-/* --------------------------------
+/* =========================================================
    PREVIOUS PAGE
--------------------------------- */
+========================================================= */
 
 function previousPage() {
+
     if (
         currentSheet <= 0 ||
         isAnimating
@@ -113,113 +179,121 @@ function previousPage() {
         return;
     }
 
+
     isAnimating = true;
     updateBook();
 
-    const sheet = sheets[currentSheet - 1];
 
     /*
-        THIS is the important difference.
+        The sheet we want to bring back.
+    */
+    const sheet = sheets[currentSheet - 1];
 
-        During a backwards turn, the sheet must remain
-        above every other sheet from beginning to end.
 
-        Otherwise the sheet underneath becomes visible
-        before the animation has finished.
+    /*
+        Put it above everything while it physically
+        turns back.
     */
     sheet.style.zIndex = 100;
 
+
     /*
         Start the reverse animation.
-
-        We deliberately do NOT change the stack or remove
-        any classes after a timeout.
     */
     sheet.classList.remove("flipped");
 
+
     currentSheet--;
 
-    const finishBackward = (event) => {
-        if (event.propertyName !== "transform") return;
 
-        sheet.removeEventListener(
-            "transitionend",
-            finishBackward
-        );
+    /*
+        Wait until the sheet has COMPLETELY returned
+        to the right side.
+    */
+    waitForTurnToFinish(sheet, () => {
 
         /*
-            Only NOW, after the physical page has reached
-            the right side, restore the normal stack.
+            NOW it can go back into the normal stack.
         */
-        setNormalStack();
+        updateStack();
 
         isAnimating = false;
-        updateBook();
-    };
 
-    sheet.addEventListener(
-        "transitionend",
-        finishBackward
-    );
+        updateBook();
+    });
 }
 
 
-/* --------------------------------
+/* =========================================================
    BUTTONS
--------------------------------- */
+========================================================= */
 
 nextButton.addEventListener("click", (event) => {
+
     event.stopPropagation();
+
     nextPage();
 });
 
+
 prevButton.addEventListener("click", (event) => {
+
     event.stopPropagation();
+
     previousPage();
 });
 
 
-/* --------------------------------
-   CLICKING THE PAGES
--------------------------------- */
+/* =========================================================
+   PAGE CLICKING
+========================================================= */
 
 sheets.forEach((sheet, index) => {
 
     sheet.addEventListener("click", (event) => {
+
         event.stopPropagation();
 
-        if (isAnimating) return;
+        if (isAnimating) {
+            return;
+        }
+
 
         /*
-            Clicking the currently active right-hand sheet
-            turns forward.
+            Current unflipped sheet:
+            turn forward.
         */
         if (
             index === currentSheet &&
             !sheet.classList.contains("flipped")
         ) {
+
             nextPage();
+
             return;
         }
 
+
         /*
-            Clicking the most recently turned sheet
-            turns backward.
+            Most recently flipped sheet:
+            turn backward.
         */
         if (
             index === currentSheet - 1 &&
             sheet.classList.contains("flipped")
         ) {
+
             previousPage();
         }
+
     });
 
 });
 
 
-/* --------------------------------
+/* =========================================================
    KEYBOARD
--------------------------------- */
+========================================================= */
 
 document.addEventListener("keydown", (event) => {
 
@@ -234,9 +308,9 @@ document.addEventListener("keydown", (event) => {
 });
 
 
-/* --------------------------------
+/* =========================================================
    INITIALIZE
--------------------------------- */
+========================================================= */
 
-setNormalStack();
+updateStack();
 updateBook();
