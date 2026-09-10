@@ -325,20 +325,6 @@ p {
 }
 
 
-/*
-    IMPORTANT:
-
-    During a backwards turn, we KEEP the sheet at z-index 20.
-
-    This prevents the sheet underneath from suddenly appearing
-    before the reverse animation is complete.
-*/
-
-.sheet.turning-back {
-    z-index: 20;
-}
-
-
 /* =========================================================
    STACKING ORDER
 ========================================================= */
