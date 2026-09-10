@@ -1,39 +1,39 @@
 const sheets = document.querySelectorAll(".sheet");
-
 const nextButton = document.getElementById("nextBtn");
 const prevButton = document.getElementById("prevBtn");
-
 const instructions = document.getElementById("instructions");
 
 let currentSheet = 0;
-
 let isAnimating = false;
 
 const TURN_DURATION = 1000;
 
 
-/* =========================================================
-   UPDATE BOOK
-========================================================= */
+/* --------------------------------
+   STACK MANAGEMENT
+-------------------------------- */
+
+function setNormalStack() {
+    sheets.forEach((sheet, index) => {
+        // First sheet is highest, last sheet is lowest.
+        sheet.style.zIndex = sheets.length - index;
+    });
+}
+
+
+/* --------------------------------
+   UI
+-------------------------------- */
 
 function updateBook() {
-
     if (currentSheet === 0) {
-
-        instructions.textContent =
-            "Click the book to open it ✨";
-
+        instructions.textContent = "Click the book to open it ✨";
     } else if (currentSheet === sheets.length) {
-
-        instructions.textContent =
-            "You've reached the end! 💕";
-
+        instructions.textContent = "You've reached the end! 💕";
     } else {
-
         instructions.textContent =
             "Click a page or use the buttons to turn it ✨";
     }
-
 
     prevButton.disabled =
         currentSheet === 0 || isAnimating;
@@ -43,12 +43,11 @@ function updateBook() {
 }
 
 
-/* =========================================================
-   TURN FORWARD
-========================================================= */
+/* --------------------------------
+   NEXT PAGE
+-------------------------------- */
 
 function nextPage() {
-
     if (
         currentSheet >= sheets.length ||
         isAnimating
@@ -57,38 +56,56 @@ function nextPage() {
     }
 
     isAnimating = true;
-
     updateBook();
 
-
     const sheet = sheets[currentSheet];
+
+    /*
+        Put the sheet being turned above EVERYTHING.
+
+        This is important because it prevents the next
+        sheet from appearing through it during the turn.
+    */
+    sheet.style.zIndex = 100;
 
     sheet.classList.add("flipped");
 
     currentSheet++;
 
-
     /*
-        Wait for the physical page-turn animation
-        to completely finish before accepting another turn.
+        Wait for the ACTUAL CSS transition instead of
+        guessing with setTimeout.
     */
+    const finishForward = (event) => {
+        if (event.propertyName !== "transform") return;
 
-    setTimeout(() => {
+        sheet.removeEventListener(
+            "transitionend",
+            finishForward
+        );
+
+        /*
+            Once the turn is finished, put the sheet back
+            into its normal stack position.
+        */
+        setNormalStack();
 
         isAnimating = false;
-
         updateBook();
+    };
 
-    }, TURN_DURATION);
+    sheet.addEventListener(
+        "transitionend",
+        finishForward
+    );
 }
 
 
-/* =========================================================
-   TURN BACKWARD
-========================================================= */
+/* --------------------------------
+   PREVIOUS PAGE
+-------------------------------- */
 
 function previousPage() {
-
     if (
         currentSheet <= 0 ||
         isAnimating
@@ -97,153 +114,129 @@ function previousPage() {
     }
 
     isAnimating = true;
-
     updateBook();
-
-
-    /*
-        The sheet we're about to turn back is the one
-        immediately before currentSheet.
-    */
 
     const sheet = sheets[currentSheet - 1];
 
+    /*
+        THIS is the important difference.
+
+        During a backwards turn, the sheet must remain
+        above every other sheet from beginning to end.
+
+        Otherwise the sheet underneath becomes visible
+        before the animation has finished.
+    */
+    sheet.style.zIndex = 100;
 
     /*
-        CRITICAL FIX:
+        Start the reverse animation.
 
-        Keep this sheet at the top of the stack while
-        it rotates backward.
-
-        Without this, its z-index immediately drops and
-        the page underneath becomes visible too early.
+        We deliberately do NOT change the stack or remove
+        any classes after a timeout.
     */
-
-    sheet.classList.add("turning-back");
-
-
-    /*
-        Remove the flipped state so the sheet begins
-        rotating from -180 degrees back toward 0.
-    */
-
     sheet.classList.remove("flipped");
 
     currentSheet--;
 
+    const finishBackward = (event) => {
+        if (event.propertyName !== "transform") return;
 
-    /*
-        Only after the animation is completely finished
-        do we remove turning-back.
+        sheet.removeEventListener(
+            "transitionend",
+            finishBackward
+        );
 
-        This prevents the underlying page from appearing
-        prematurely.
-    */
-
-    setTimeout(() => {
-
-        sheet.classList.remove("turning-back");
+        /*
+            Only NOW, after the physical page has reached
+            the right side, restore the normal stack.
+        */
+        setNormalStack();
 
         isAnimating = false;
-
         updateBook();
+    };
 
-    }, TURN_DURATION);
+    sheet.addEventListener(
+        "transitionend",
+        finishBackward
+    );
 }
 
 
-/* =========================================================
-   BUTTON EVENTS
-========================================================= */
+/* --------------------------------
+   BUTTONS
+-------------------------------- */
 
-nextButton.addEventListener("click", function (event) {
-
+nextButton.addEventListener("click", (event) => {
     event.stopPropagation();
-
     nextPage();
 });
 
-
-prevButton.addEventListener("click", function (event) {
-
+prevButton.addEventListener("click", (event) => {
     event.stopPropagation();
-
     previousPage();
 });
 
 
-/* =========================================================
-   CLICK BOOK TO TURN
-========================================================= */
+/* --------------------------------
+   CLICKING THE PAGES
+-------------------------------- */
 
 sheets.forEach((sheet, index) => {
 
-    sheet.addEventListener("click", function (event) {
-
+    sheet.addEventListener("click", (event) => {
         event.stopPropagation();
 
-
-        if (isAnimating) {
-            return;
-        }
-
+        if (isAnimating) return;
 
         /*
-            Forward:
-
-            The next sheet in the stack is the one that
-            should be turned.
+            Clicking the currently active right-hand sheet
+            turns forward.
         */
-
         if (
             index === currentSheet &&
             !sheet.classList.contains("flipped")
         ) {
-
             nextPage();
-
             return;
         }
 
-
         /*
-            Backward:
-
-            The last sheet we turned is the one whose
-            backside is currently visible.
+            Clicking the most recently turned sheet
+            turns backward.
         */
-
         if (
             index === currentSheet - 1 &&
             sheet.classList.contains("flipped")
         ) {
-
             previousPage();
         }
     });
+
 });
 
 
-/* =========================================================
-   KEYBOARD CONTROLS
-========================================================= */
+/* --------------------------------
+   KEYBOARD
+-------------------------------- */
 
-document.addEventListener("keydown", function (event) {
+document.addEventListener("keydown", (event) => {
 
     if (event.key === "ArrowRight") {
-
         nextPage();
     }
 
     if (event.key === "ArrowLeft") {
-
         previousPage();
     }
+
 });
 
 
-/* =========================================================
-   INITIAL STATE
-========================================================= */
+/* --------------------------------
+   INITIALIZE
+-------------------------------- */
 
+setNormalStack();
 updateBook();
