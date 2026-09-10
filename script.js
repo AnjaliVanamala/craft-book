@@ -7,23 +7,16 @@ const instructions = document.getElementById("instructions");
 
 let currentSheet = 0;
 
+let isAnimating = false;
+
+const TURN_DURATION = 1000;
+
 
 /* =========================================================
    UPDATE BOOK
 ========================================================= */
 
 function updateBook() {
-
-    /*
-        currentSheet tells us how many physical sheets
-        have been turned.
-
-        0 = cover closed
-        1 = page 1 | page 2
-        2 = page 3 | page 4
-        ...
-        9 = back cover
-    */
 
     if (currentSheet === 0) {
 
@@ -42,11 +35,11 @@ function updateBook() {
     }
 
 
-    /* Disable buttons at the appropriate ends */
+    prevButton.disabled =
+        currentSheet === 0 || isAnimating;
 
-    prevButton.disabled = currentSheet === 0;
-
-    nextButton.disabled = currentSheet === sheets.length;
+    nextButton.disabled =
+        currentSheet === sheets.length || isAnimating;
 }
 
 
@@ -56,19 +49,37 @@ function updateBook() {
 
 function nextPage() {
 
-    if (currentSheet >= sheets.length) {
+    if (
+        currentSheet >= sheets.length ||
+        isAnimating
+    ) {
         return;
     }
 
-    /*
-        Turn the current physical sheet.
-    */
+    isAnimating = true;
 
-    sheets[currentSheet].classList.add("flipped");
+    updateBook();
+
+
+    const sheet = sheets[currentSheet];
+
+    sheet.classList.add("flipped");
 
     currentSheet++;
 
-    updateBook();
+
+    /*
+        Wait for the physical page-turn animation
+        to completely finish before accepting another turn.
+    */
+
+    setTimeout(() => {
+
+        isAnimating = false;
+
+        updateBook();
+
+    }, TURN_DURATION);
 }
 
 
@@ -78,19 +89,66 @@ function nextPage() {
 
 function previousPage() {
 
-    if (currentSheet <= 0) {
+    if (
+        currentSheet <= 0 ||
+        isAnimating
+    ) {
         return;
     }
 
+    isAnimating = true;
+
+    updateBook();
+
+
     /*
-        Move back to the previous physical sheet.
+        The sheet we're about to turn back is the one
+        immediately before currentSheet.
     */
+
+    const sheet = sheets[currentSheet - 1];
+
+
+    /*
+        CRITICAL FIX:
+
+        Keep this sheet at the top of the stack while
+        it rotates backward.
+
+        Without this, its z-index immediately drops and
+        the page underneath becomes visible too early.
+    */
+
+    sheet.classList.add("turning-back");
+
+
+    /*
+        Remove the flipped state so the sheet begins
+        rotating from -180 degrees back toward 0.
+    */
+
+    sheet.classList.remove("flipped");
 
     currentSheet--;
 
-    sheets[currentSheet].classList.remove("flipped");
 
-    updateBook();
+    /*
+        Only after the animation is completely finished
+        do we remove turning-back.
+
+        This prevents the underlying page from appearing
+        prematurely.
+    */
+
+    setTimeout(() => {
+
+        sheet.classList.remove("turning-back");
+
+        isAnimating = false;
+
+        updateBook();
+
+    }, TURN_DURATION);
 }
 
 
@@ -125,14 +183,16 @@ sheets.forEach((sheet, index) => {
         event.stopPropagation();
 
 
+        if (isAnimating) {
+            return;
+        }
+
+
         /*
-            Only the currently active sheet should respond.
+            Forward:
 
-            If it hasn't been turned yet:
-                clicking it turns it forward.
-
-            If it has already been turned:
-                clicking its backside turns it backward.
+            The next sheet in the stack is the one that
+            should be turned.
         */
 
         if (
@@ -145,6 +205,13 @@ sheets.forEach((sheet, index) => {
             return;
         }
 
+
+        /*
+            Backward:
+
+            The last sheet we turned is the one whose
+            backside is currently visible.
+        */
 
         if (
             index === currentSheet - 1 &&
