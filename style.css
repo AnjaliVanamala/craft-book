@@ -2,12 +2,26 @@
     box-sizing: border-box;
 }
 
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
 body {
     margin: 0;
+
     font-family: "Quicksand", sans-serif;
+
     background: #e8d9c5;
+
     overflow: hidden;
 }
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
 
 .background {
     width: 100vw;
@@ -15,24 +29,46 @@ body {
 
     display: flex;
     flex-direction: column;
+
     justify-content: center;
     align-items: center;
 
     background:
-        radial-gradient(circle at 20% 20%, #f5eadb 0 3px, transparent 4px),
-        radial-gradient(circle at 80% 70%, #f5eadb 0 2px, transparent 3px),
+        radial-gradient(
+            circle at 20% 20%,
+            #f5eadb 0 3px,
+            transparent 4px
+        ),
+        radial-gradient(
+            circle at 80% 70%,
+            #f5eadb 0 2px,
+            transparent 3px
+        ),
         #e8d9c5;
 }
 
+
+/* =========================================================
+   INSTRUCTIONS
+========================================================= */
+
 .instructions {
     margin-bottom: 25px;
+
     font-size: 16px;
     font-weight: 600;
+
     color: #6d5546;
+
+    min-height: 24px;
+
+    text-align: center;
 }
 
 
-/* BOOK */
+/* =========================================================
+   BOOK
+========================================================= */
 
 .book {
     width: 760px;
@@ -41,42 +77,89 @@ body {
     position: relative;
 
     perspective: 2200px;
+
+    transform-style: preserve-3d;
+
+    filter:
+        drop-shadow(
+            0 18px 25px rgba(70, 50, 40, .18)
+        );
 }
 
 
-/* EVERY PAGE */
+/*
+    Each sheet is HALF the width of the complete book.
 
-.page {
+    When closed:
+        sheet sits on the RIGHT side.
+
+    When flipped:
+        it rotates around its LEFT edge
+        and moves visually to the LEFT side.
+*/
+
+.sheet {
     position: absolute;
+
+    top: 0;
+    right: 0;
 
     width: 50%;
     height: 100%;
-
-    right: 0;
 
     transform-origin: left center;
 
     transform-style: preserve-3d;
 
     transition:
-        transform 1s cubic-bezier(.65,.05,.36,1);
+        transform 1s cubic-bezier(.65, .05, .36, 1);
 
     cursor: pointer;
-
-    box-shadow:
-        0 12px 25px rgba(70, 50, 40, .18);
-
-    border-radius: 0 8px 8px 0;
 }
 
 
-/* PAPER */
+/* =========================================================
+   SHEET FACES
+========================================================= */
+
+.face {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    backface-visibility: hidden;
+
+    -webkit-backface-visibility: hidden;
+
+    transform-style: preserve-3d;
+}
+
+
+/*
+    The back face starts turned around.
+
+    When the sheet itself rotates -180 degrees,
+    the two rotations cancel out and the backside
+    appears correctly on the left.
+*/
+
+.back-face {
+    transform: rotateY(180deg);
+}
+
+
+/* =========================================================
+   PAPER
+========================================================= */
 
 .paper {
     background:
         linear-gradient(
             90deg,
-            rgba(0,0,0,.04),
+            rgba(0, 0, 0, .04),
             transparent 10%
         ),
         #fffaf0;
@@ -86,16 +169,37 @@ body {
     padding: 35px;
 
     overflow: hidden;
+
+    border-radius: 0 8px 8px 0;
+
+    box-shadow:
+        inset 8px 0 12px rgba(70, 50, 40, .04);
 }
 
 
-/* PAGE CONTENT */
+/*
+    The left-facing pages get the opposite edge treatment.
+*/
+
+.back-face.paper {
+    border-radius: 8px 0 0 8px;
+
+    box-shadow:
+        inset -8px 0 12px rgba(70, 50, 40, .04);
+}
+
+
+/* =========================================================
+   PAGE CONTENT
+========================================================= */
 
 .page-content {
     width: 100%;
     height: 100%;
 
     position: relative;
+
+    overflow: hidden;
 }
 
 .page-number {
@@ -105,11 +209,14 @@ body {
     right: 5px;
 
     font-size: 12px;
+
     color: #a89585;
 }
 
 
-/* TEXT */
+/* =========================================================
+   TEXT
+========================================================= */
 
 h1,
 h2 {
@@ -118,17 +225,24 @@ h2 {
 
 h1 {
     font-size: 55px;
+
     line-height: .9;
+
     margin: 15px 0;
 }
 
 h2 {
     font-size: 34px;
+
     margin-top: 0;
+
+    margin-bottom: 18px;
 }
 
 h3 {
     font-size: 20px;
+
+    margin-top: 15px;
     margin-bottom: 8px;
 }
 
@@ -141,34 +255,37 @@ p {
 }
 
 
-/* COVER */
+/* =========================================================
+   COVERS
+========================================================= */
 
 .cover {
     color: white;
 
     display: flex;
+
     justify-content: center;
     align-items: center;
 
     text-align: center;
 
-    backface-visibility: hidden;
+    border-radius: 5px 12px 12px 5px;
 }
 
 .front-cover {
     background:
         radial-gradient(
             circle,
-            rgba(255,255,255,.15) 2px,
+            rgba(255, 255, 255, .15) 2px,
             transparent 3px
         ),
         #b97979;
-
-    border-radius: 5px 12px 12px 5px;
 }
 
 .back-cover {
     background: #9f6868;
+
+    border-radius: 12px 5px 5px 12px;
 }
 
 .cover-content {
@@ -177,6 +294,7 @@ p {
 
 .small-text {
     letter-spacing: 5px;
+
     font-size: 13px;
 }
 
@@ -194,62 +312,102 @@ p {
 
 .big-doodle {
     font-size: 50px;
+
     text-align: center;
+
     margin: 35px 0;
 }
 
 
-/* PAGE TURNING */
+/* =========================================================
+   PAGE TURNING
+========================================================= */
 
-.page.flipped {
+.sheet.flipped {
     transform: rotateY(-180deg);
 }
 
 
-/* STACKING ORDER */
+/*
+    IMPORTANT:
 
-.page-one {
+    The first sheet must be above everything.
+    The second sheet must be below it, etc.
+
+    This gives us a real physical stack.
+*/
+
+.sheet[data-sheet="0"] {
+    z-index: 9;
+}
+
+.sheet[data-sheet="1"] {
+    z-index: 8;
+}
+
+.sheet[data-sheet="2"] {
     z-index: 7;
 }
 
-.page-two {
+.sheet[data-sheet="3"] {
     z-index: 6;
 }
 
-.page-three {
+.sheet[data-sheet="4"] {
     z-index: 5;
 }
 
-.page-four {
+.sheet[data-sheet="5"] {
     z-index: 4;
 }
 
-.page-five {
+.sheet[data-sheet="6"] {
     z-index: 3;
 }
 
-.page-six {
+.sheet[data-sheet="7"] {
     z-index: 2;
 }
 
-.back-cover {
+.sheet[data-sheet="8"] {
     z-index: 1;
 }
 
 
-/* MATERIAL LIST */
+/*
+    Once a sheet is flipped, it needs to remain above
+    the sheets that are still closed.
+
+    This allows the turned pages to stack naturally
+    on the left side.
+*/
+
+.sheet.flipped {
+    z-index: 20;
+}
+
+
+/* =========================================================
+   MATERIAL LIST
+========================================================= */
 
 ul,
 ol {
     line-height: 2;
+
     padding-left: 25px;
+
+    margin-top: 5px;
 }
 
 
-/* TIP BOX */
+/* =========================================================
+   TIP BOX
+========================================================= */
 
 .tip {
     margin-top: 25px;
+
     padding: 15px;
 
     background: #f4dfb9;
@@ -262,7 +420,9 @@ ol {
 }
 
 
-/* PHOTOS */
+/* =========================================================
+   PHOTO PLACEHOLDER
+========================================================= */
 
 .photo-placeholder {
     height: 135px;
@@ -274,6 +434,7 @@ ol {
     border-radius: 8px;
 
     display: flex;
+
     flex-direction: column;
 
     justify-content: center;
@@ -290,49 +451,18 @@ ol {
 
 .photo-placeholder p {
     margin: 5px;
+
+    line-height: 1.2;
 }
 
 
-/* PHOTO GRID */
-
-.photo-grid {
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 12px;
-
-    margin-bottom: 12px;
-}
-
-.photo {
-    height: 150px;
-
-    padding: 7px;
-
-    background: white;
-
-    box-shadow: 0 4px 10px rgba(0,0,0,.15);
-
-    transform: rotate(-2deg);
-}
-
-.photo:nth-child(even) {
-    transform: rotate(2deg);
-}
-
-.photo img {
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-}
-
-
-/* BUTTONS */
+/* =========================================================
+   CONTROLS
+========================================================= */
 
 .controls {
     display: flex;
+
     gap: 15px;
 
     margin-top: 25px;
@@ -350,27 +480,50 @@ button {
     color: white;
 
     font-family: inherit;
+
     font-weight: 700;
 
     cursor: pointer;
 
-    transition: .2s;
+    transition:
+        transform .2s,
+        filter .2s,
+        opacity .2s;
 }
 
-button:hover {
+button:hover:not(:disabled) {
     transform: translateY(-2px);
+
     filter: brightness(1.08);
 }
 
+button:disabled {
+    opacity: .45;
 
-/* MOBILE */
+    cursor: default;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (max-width: 800px) {
 
     .book {
-        width: 90vw;
-        height: 60vw;
+        width: 92vw;
+
+        height: 62vw;
+
         max-height: 500px;
+    }
+
+    .instructions {
+        margin-bottom: 15px;
+
+        padding: 0 20px;
+
+        font-size: 14px;
     }
 
     .paper {
@@ -383,6 +536,8 @@ button:hover {
 
     h2 {
         font-size: 25px;
+
+        margin-bottom: 12px;
     }
 
     h3 {
@@ -394,8 +549,136 @@ button:hover {
         font-size: 12px;
     }
 
-    .photo {
+    p {
+        line-height: 1.5;
+    }
+
+    ul,
+    ol {
+        line-height: 1.65;
+
+        padding-left: 20px;
+    }
+
+    .photo-placeholder {
         height: 100px;
     }
 
+    .photo-placeholder span {
+        font-size: 28px;
+    }
+
+    .photo-placeholder p {
+        font-size: 10px;
+    }
+
+    .tip {
+        margin-top: 15px;
+
+        padding: 10px;
+
+        line-height: 1.45;
+    }
+
+    .big-doodle {
+        font-size: 38px;
+
+        margin: 20px 0;
+    }
+
+    .cover-content {
+        padding: 15px;
+    }
+
+    .small-text {
+        font-size: 9px;
+
+        letter-spacing: 3px;
+    }
+
+    .cover h1 {
+        font-size: 34px;
+    }
+
+    .cover h2 {
+        font-size: 30px;
+    }
+
+    .cover p {
+        font-size: 11px;
+
+        line-height: 1.5;
+    }
+
+    .flower {
+        font-size: 30px;
+    }
+
+    .controls {
+        margin-top: 15px;
+
+        gap: 10px;
+    }
+
+    button {
+        padding: 9px 16px;
+
+        font-size: 12px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .book {
+        width: 94vw;
+
+        height: 68vw;
+    }
+
+    .paper {
+        padding: 13px;
+    }
+
+    h2 {
+        font-size: 19px;
+    }
+
+    h3 {
+        font-size: 13px;
+
+        margin-top: 8px;
+    }
+
+    p,
+    li {
+        font-size: 9px;
+    }
+
+    ul,
+    ol {
+        line-height: 1.45;
+
+        padding-left: 16px;
+    }
+
+    .photo-placeholder {
+        height: 70px;
+
+        margin-bottom: 8px;
+    }
+
+    .tip {
+        padding: 7px;
+
+        margin-top: 8px;
+    }
+
+    .page-number {
+        font-size: 9px;
+    }
 }
