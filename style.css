@@ -317,11 +317,6 @@ p {
 
 .sheet.flipped {
     transform: rotateY(-180deg);
-
-    /*
-        Turned pages remain above the unopened stack.
-    */
-    z-index: 20;
 }
 
 
