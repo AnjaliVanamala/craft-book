@@ -1,0 +1,401 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Quicksand", sans-serif;
+    background: #e8d9c5;
+    overflow: hidden;
+}
+
+.background {
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    background:
+        radial-gradient(circle at 20% 20%, #f5eadb 0 3px, transparent 4px),
+        radial-gradient(circle at 80% 70%, #f5eadb 0 2px, transparent 3px),
+        #e8d9c5;
+}
+
+.instructions {
+    margin-bottom: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #6d5546;
+}
+
+
+/* BOOK */
+
+.book {
+    width: 760px;
+    height: 500px;
+
+    position: relative;
+
+    perspective: 2200px;
+}
+
+
+/* EVERY PAGE */
+
+.page {
+    position: absolute;
+
+    width: 50%;
+    height: 100%;
+
+    right: 0;
+
+    transform-origin: left center;
+
+    transform-style: preserve-3d;
+
+    transition:
+        transform 1s cubic-bezier(.65,.05,.36,1);
+
+    cursor: pointer;
+
+    box-shadow:
+        0 12px 25px rgba(70, 50, 40, .18);
+
+    border-radius: 0 8px 8px 0;
+}
+
+
+/* PAPER */
+
+.paper {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.04),
+            transparent 10%
+        ),
+        #fffaf0;
+
+    color: #493c36;
+
+    padding: 35px;
+
+    overflow: hidden;
+}
+
+
+/* PAGE CONTENT */
+
+.page-content {
+    width: 100%;
+    height: 100%;
+
+    position: relative;
+}
+
+.page-number {
+    position: absolute;
+
+    bottom: 5px;
+    right: 5px;
+
+    font-size: 12px;
+    color: #a89585;
+}
+
+
+/* TEXT */
+
+h1,
+h2 {
+    font-family: "DM Serif Display", serif;
+}
+
+h1 {
+    font-size: 55px;
+    line-height: .9;
+    margin: 15px 0;
+}
+
+h2 {
+    font-size: 34px;
+    margin-top: 0;
+}
+
+h3 {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+p {
+    line-height: 1.7;
+}
+
+.center {
+    text-align: center;
+}
+
+
+/* COVER */
+
+.cover {
+    color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    backface-visibility: hidden;
+}
+
+.front-cover {
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,255,255,.15) 2px,
+            transparent 3px
+        ),
+        #b97979;
+
+    border-radius: 5px 12px 12px 5px;
+}
+
+.back-cover {
+    background: #9f6868;
+}
+
+.cover-content {
+    padding: 30px;
+}
+
+.small-text {
+    letter-spacing: 5px;
+    font-size: 13px;
+}
+
+.cover p {
+    font-size: 15px;
+}
+
+.flower {
+    font-size: 42px;
+}
+
+.cover h2 {
+    font-size: 45px;
+}
+
+.big-doodle {
+    font-size: 50px;
+    text-align: center;
+    margin: 35px 0;
+}
+
+
+/* PAGE TURNING */
+
+.page.flipped {
+    transform: rotateY(-180deg);
+}
+
+
+/* STACKING ORDER */
+
+.page-one {
+    z-index: 7;
+}
+
+.page-two {
+    z-index: 6;
+}
+
+.page-three {
+    z-index: 5;
+}
+
+.page-four {
+    z-index: 4;
+}
+
+.page-five {
+    z-index: 3;
+}
+
+.page-six {
+    z-index: 2;
+}
+
+.back-cover {
+    z-index: 1;
+}
+
+
+/* MATERIAL LIST */
+
+ul,
+ol {
+    line-height: 2;
+    padding-left: 25px;
+}
+
+
+/* TIP BOX */
+
+.tip {
+    margin-top: 25px;
+    padding: 15px;
+
+    background: #f4dfb9;
+
+    border-radius: 10px;
+
+    transform: rotate(-1deg);
+
+    line-height: 1.6;
+}
+
+
+/* PHOTOS */
+
+.photo-placeholder {
+    height: 135px;
+
+    background: #eadfd1;
+
+    border: 2px dashed #bca998;
+
+    border-radius: 8px;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    color: #9b8879;
+
+    margin-bottom: 15px;
+}
+
+.photo-placeholder span {
+    font-size: 35px;
+}
+
+.photo-placeholder p {
+    margin: 5px;
+}
+
+
+/* PHOTO GRID */
+
+.photo-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 12px;
+
+    margin-bottom: 12px;
+}
+
+.photo {
+    height: 150px;
+
+    padding: 7px;
+
+    background: white;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,.15);
+
+    transform: rotate(-2deg);
+}
+
+.photo:nth-child(even) {
+    transform: rotate(2deg);
+}
+
+.photo img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+/* BUTTONS */
+
+.controls {
+    display: flex;
+    gap: 15px;
+
+    margin-top: 25px;
+}
+
+button {
+    border: none;
+
+    padding: 11px 22px;
+
+    border-radius: 25px;
+
+    background: #b97979;
+
+    color: white;
+
+    font-family: inherit;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+}
+
+
+/* MOBILE */
+
+@media (max-width: 800px) {
+
+    .book {
+        width: 90vw;
+        height: 60vw;
+        max-height: 500px;
+    }
+
+    .paper {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 38px;
+    }
+
+    h2 {
+        font-size: 25px;
+    }
+
+    h3 {
+        font-size: 16px;
+    }
+
+    p,
+    li {
+        font-size: 12px;
+    }
+
+    .photo {
+        height: 100px;
+    }
+
+}
