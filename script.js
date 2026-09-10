@@ -1,57 +1,36 @@
-const pages = document.querySelectorAll(".page");
+const sheets = document.querySelectorAll(".sheet");
 
 const nextButton = document.getElementById("nextBtn");
 const prevButton = document.getElementById("prevBtn");
 
 const instructions = document.getElementById("instructions");
 
-let currentPage = 0;
+let currentSheet = 0;
 
 
-/* TURN TO NEXT PAGE */
-
-function nextPage() {
-
-    if (currentPage < pages.length - 1) {
-
-        pages[currentPage].classList.add("flipped");
-
-        currentPage++;
-
-        updateBook();
-
-    }
-
-}
-
-
-/* TURN BACK */
-
-function previousPage() {
-
-    if (currentPage > 0) {
-
-        currentPage--;
-
-        pages[currentPage].classList.remove("flipped");
-
-        updateBook();
-
-    }
-
-}
-
-
-/* UPDATE BUTTONS */
+/* =========================================================
+   UPDATE BOOK
+========================================================= */
 
 function updateBook() {
 
-    if (currentPage === 0) {
+    /*
+        currentSheet tells us how many physical sheets
+        have been turned.
+
+        0 = cover closed
+        1 = page 1 | page 2
+        2 = page 3 | page 4
+        ...
+        9 = back cover
+    */
+
+    if (currentSheet === 0) {
 
         instructions.textContent =
             "Click the book to open it ✨";
 
-    } else if (currentPage === pages.length - 1) {
+    } else if (currentSheet === sheets.length) {
 
         instructions.textContent =
             "You've reached the end! 💕";
@@ -60,55 +39,144 @@ function updateBook() {
 
         instructions.textContent =
             "Click a page or use the buttons to turn it ✨";
-
     }
 
+
+    /* Disable buttons at the appropriate ends */
+
+    prevButton.disabled = currentSheet === 0;
+
+    nextButton.disabled = currentSheet === sheets.length;
 }
 
 
-/* BUTTON EVENTS */
+/* =========================================================
+   TURN FORWARD
+========================================================= */
 
-nextButton.addEventListener("click", nextPage);
+function nextPage() {
 
-prevButton.addEventListener("click", previousPage);
+    if (currentSheet >= sheets.length) {
+        return;
+    }
+
+    /*
+        Turn the current physical sheet.
+    */
+
+    sheets[currentSheet].classList.add("flipped");
+
+    currentSheet++;
+
+    updateBook();
+}
 
 
-/* CLICK BOOK TO TURN */
+/* =========================================================
+   TURN BACKWARD
+========================================================= */
 
-pages.forEach((page) => {
+function previousPage() {
 
-    page.addEventListener("click", () => {
+    if (currentSheet <= 0) {
+        return;
+    }
 
-        /*
-        If this page is already flipped,
-        turn it backward.
-        */
+    /*
+        Move back to the previous physical sheet.
+    */
 
-        if (page.classList.contains("flipped")) {
+    currentSheet--;
 
-            previousPage();
+    sheets[currentSheet].classList.remove("flipped");
 
-        } else {
+    updateBook();
+}
 
-            nextPage();
 
-        }
+/* =========================================================
+   BUTTON EVENTS
+========================================================= */
 
-    });
+nextButton.addEventListener("click", function (event) {
 
+    event.stopPropagation();
+
+    nextPage();
 });
 
 
-/* KEYBOARD CONTROLS */
+prevButton.addEventListener("click", function (event) {
 
-document.addEventListener("keydown", (event) => {
+    event.stopPropagation();
+
+    previousPage();
+});
+
+
+/* =========================================================
+   CLICK BOOK TO TURN
+========================================================= */
+
+sheets.forEach((sheet, index) => {
+
+    sheet.addEventListener("click", function (event) {
+
+        event.stopPropagation();
+
+
+        /*
+            Only the currently active sheet should respond.
+
+            If it hasn't been turned yet:
+                clicking it turns it forward.
+
+            If it has already been turned:
+                clicking its backside turns it backward.
+        */
+
+        if (
+            index === currentSheet &&
+            !sheet.classList.contains("flipped")
+        ) {
+
+            nextPage();
+
+            return;
+        }
+
+
+        if (
+            index === currentSheet - 1 &&
+            sheet.classList.contains("flipped")
+        ) {
+
+            previousPage();
+        }
+    });
+});
+
+
+/* =========================================================
+   KEYBOARD CONTROLS
+========================================================= */
+
+document.addEventListener("keydown", function (event) {
 
     if (event.key === "ArrowRight") {
+
         nextPage();
     }
 
     if (event.key === "ArrowLeft") {
+
         previousPage();
     }
-
 });
+
+
+/* =========================================================
+   INITIAL STATE
+========================================================= */
+
+updateBook();
