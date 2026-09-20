@@ -340,20 +340,25 @@ ol {
 ========================================================= */
 
 .tip {
-    margin-top: auto;      
+    margin-top: auto;
     margin-bottom: calc(var(--u) * 2);
-    margin-inline: calc(var(--u) * .5); 
+    margin-inline: calc(var(--u) * .5);
     flex: 0 0 auto;
 
-    padding: calc(var(--u) * 1);
-    font-size: calc(var(--u) * 1.15); 
-    line-height: 1.4;
+    padding: calc(var(--u) * 1.2);
+
+    background: #f4dfb9;
+    border-radius: calc(var(--u) * .9);
+    transform: rotate(-1deg);
+
+    font-size: calc(var(--u) * 1.4);
+    line-height: 1.5;
 }
 
 .tip p,
 .tip h3 {
     margin: 0;
-    font-size: inherit; 
+    font-size: inherit;
 }
 
 /* =========================================================
