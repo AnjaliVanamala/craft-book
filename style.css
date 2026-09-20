@@ -53,11 +53,12 @@ body {
 ========================================================= */
 
 .instructions {
-    margin-bottom: 25px;
+    margin-bottom: clamp(10px, 2.5vh, 25px);
+    padding: 0 20px;
 
-    min-height: 24px;
+    min-height: 1.5em;
 
-    font-size: 16px;
+    font-size: clamp(12px, 1.6vw, 16px);
     font-weight: 600;
 
     color: #6d5546;
@@ -69,30 +70,26 @@ body {
 /* =========================================================
    BOOK
 ========================================================= */
-
-/*
-    Larger than before.
-
-    The book maintains roughly a 1.52 : 1 ratio while
-    automatically shrinking to fit smaller screens.
-*/
-
 .book {
-    width: min(
-        1100px,
-        94vw,
-        calc(82vh * 1.52)
-    );
+    --bw: min(1100px, 94vw, calc(82vh * 1.52));
+    --u: calc(var(--bw) / 100);
 
+    width: var(--bw);
     aspect-ratio: 1.52 / 1;
 
     position: relative;
-    perspective: 2200px;
+    perspective: calc(var(--bw) * 2);
     transform-style: preserve-3d;
 
     filter: drop-shadow(
-        0 18px 25px rgba(70, 50, 40, .18)
+        0 calc(var(--u) * 1.6) calc(var(--u) * 2.3) rgba(70, 50, 40, .18)
     );
+}
+
+@supports (height: 1dvh) {
+    .book {
+        --bw: min(1100px, 94vw, calc(82dvh * 1.52));
+    }
 }
 
 /* =========================================================
@@ -162,22 +159,22 @@ body {
 
     color: #493c36;
 
-    padding: 42px;
+    padding: calc(var(--u) * 3.8);
 
     overflow: hidden;
 
-    border-radius: 0 8px 8px 0;
+    border-radius: 0 calc(var(--u) * .73) calc(var(--u) * .73) 0;
 
     box-shadow:
-        inset 8px 0 12px rgba(70, 50, 40, .04);
+        inset calc(var(--u) * .73) 0 calc(var(--u) * 1.1) rgba(70, 50, 40, .04);
 }
 
 
 .back-face.paper {
-    border-radius: 8px 0 0 8px;
+    border-radius: calc(var(--u) * .73) 0 0 calc(var(--u) * .73);
 
     box-shadow:
-        inset -8px 0 12px rgba(70, 50, 40, .04);
+        inset calc(var(--u) * -.73) 0 calc(var(--u) * 1.1) rgba(70, 50, 40, .04);
 }
 
 
@@ -197,10 +194,10 @@ body {
 .page-number {
     position: absolute;
 
-    bottom: 5px;
-    right: 5px;
+    bottom: calc(var(--u) * .45);
+    right: calc(var(--u) * .45);
 
-    font-size: 12px;
+    font-size: calc(var(--u) * 1.1);
 
     color: #a89585;
 }
@@ -216,30 +213,34 @@ h2 {
 }
 
 h1 {
-    font-size: 62px;
+    font-size: calc(var(--u) * 5.6);
 
     line-height: .9;
 
-    margin: 15px 0;
+    margin: calc(var(--u) * 1.4) 0;
 }
 
 h2 {
-    font-size: 38px;
+    font-size: calc(var(--u) * 3.45);
 
     margin-top: 0;
 
-    margin-bottom: 20px;
+    margin-bottom: calc(var(--u) * 1.8);
 }
 
 h3 {
-    font-size: 22px;
+    font-size: calc(var(--u) * 2);
 
-    margin-top: 18px;
-    margin-bottom: 9px;
+    margin-top: calc(var(--u) * 1.6);
+    margin-bottom: calc(var(--u) * .8);
 }
-
+p,
+li {
+    font-size: calc(var(--u) * 1.45);
+}
 p {
     line-height: 1.7;
+    margin-block: calc(var(--u) * 1.45);
 }
 
 .center {
@@ -261,7 +262,7 @@ p {
 
     text-align: center;
 
-    border-radius: 5px 12px 12px 5px;
+    border-radius: calc(var(--u) * .45) calc(var(--u) * 1.1) calc(var(--u) * 1.1) calc(var(--u) * .45);
 }
 
 .front-cover {
@@ -277,37 +278,37 @@ p {
 .back-cover {
     background: #9f6868;
 
-    border-radius: 12px 5px 5px 12px;
+    border-radius: calc(var(--u) * 1.1) calc(var(--u) * .45) calc(var(--u) * .45) calc(var(--u) * 1.1);
 }
 
 .cover-content {
-    padding: 30px;
+    padding: calc(var(--u) * 2.7);
 }
 
 .small-text {
-    letter-spacing: 5px;
+    letter-spacing: calc(var(--u) * .45);
 
-    font-size: 14px;
+    font-size: calc(var(--u) * 1.27);
 }
 
 .cover p {
-    font-size: 16px;
+    font-size: calc(var(--u) * 1.45);
 }
 
 .flower {
-    font-size: 48px;
+    font-size: calc(var(--u) * 4.4);
 }
 
 .cover h2 {
-    font-size: 48px;
+    font-size: calc(var(--u) * 4.4);
 }
 
 .big-doodle {
-    font-size: 55px;
+    font-size: calc(var(--u) * 5);
 
     text-align: center;
 
-    margin: 35px 0;
+    margin: calc(var(--u) * 3.2) 0;
 }
 
 
@@ -328,9 +329,9 @@ ul,
 ol {
     line-height: 2;
 
-    padding-left: 25px;
+    padding-left: calc(var(--u) * 2.3);
 
-    margin-top: 5px;
+    margin-top: calc(var(--u) * .45);
 }
 
 
@@ -339,13 +340,13 @@ ol {
 ========================================================= */
 
 .tip {
-    margin-top: 25px;
+    margin-top: calc(var(--u) * 2.3);
 
-    padding: 15px;
+    padding: calc(var(--u) * 1.4);
 
     background: #f4dfb9;
 
-    border-radius: 10px;
+    border-radius: calc(var(--u) * .9);
 
     transform: rotate(-1deg);
 
@@ -358,13 +359,13 @@ ol {
 ========================================================= */
 
 .photo-placeholder {
-    height: 150px;
+    height: calc(var(--u) * 13.6);
 
     background: #eadfd1;
 
-    border: 2px dashed #bca998;
+    border: max(1px, calc(var(--u) * .18)) dashed #bca998;
 
-    border-radius: 8px;
+    border-radius: calc(var(--u) * .73);
 
     display: flex;
 
@@ -375,15 +376,15 @@ ol {
 
     color: #9b8879;
 
-    margin-bottom: 15px;
+    margin-bottom: calc(var(--u) * 1.4);
 }
 
 .photo-placeholder span {
-    font-size: 38px;
+    font-size: calc(var(--u) * 3.45);
 }
 
 .photo-placeholder p {
-    margin: 5px;
+    margin: calc(var(--u) * .45);
 
     line-height: 1.2;
 }
@@ -392,7 +393,7 @@ ol {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: calc(var(--u) * .73);
 }
 
 .photo-placeholder.full {
@@ -400,20 +401,20 @@ ol {
 }
 
 .photo-placeholder.half {
-    width: calc(50% - 8px);
+    width: calc(50% - var(--u) * .7);
     display: inline-block;
     vertical-align: top;
 }
 
 .photo-placeholder.big {
-    height: 300px;
+    height: calc(var(--u) * 27.3);
     width: 100%;
 }
 
 .photo-row {
     display: flex;
-    gap: 15px;
-    margin-bottom: 15px;
+    gap: calc(var(--u) * 1.4);
+    margin-bottom: calc(var(--u) * 1.4);
 }
 
 .photo-row .photo-placeholder {
@@ -428,15 +429,15 @@ ol {
 .controls {
     display: flex;
 
-    gap: 15px;
+    gap: clamp(8px, 1.5vw, 15px);
 
-    margin-top: 25px;
+    margin-top: clamp(10px, 2.5vh, 25px);
 }
 
 button {
     border: none;
 
-    padding: 12px 24px;
+    padding: clamp(8px, 1.4vw, 12px) clamp(14px, 2.4vw, 24px);
 
     border-radius: 25px;
 
@@ -445,7 +446,7 @@ button {
     color: white;
 
     font-family: inherit;
-
+    font-size: clamp(12px, 1.5vw, 15px);
     font-weight: 700;
 
     cursor: pointer;
@@ -466,184 +467,4 @@ button:disabled {
     opacity: .45;
 
     cursor: default;
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 800px) {
-
-    .book {
-        width: 92vw;
-
-        aspect-ratio: 1.52 / 1;
-
-        max-height: none;
-    }
-
-    .instructions {
-        margin-bottom: 15px;
-
-        padding: 0 20px;
-
-        font-size: 14px;
-    }
-
-    .paper {
-        padding: 20px;
-    }
-
-    h1 {
-        font-size: 38px;
-    }
-
-    h2 {
-        font-size: 25px;
-
-        margin-bottom: 12px;
-    }
-
-    h3 {
-        font-size: 16px;
-    }
-
-    p,
-    li {
-        font-size: 12px;
-    }
-
-    p {
-        line-height: 1.5;
-    }
-
-    ul,
-    ol {
-        line-height: 1.65;
-
-        padding-left: 20px;
-    }
-
-    .photo-placeholder {
-        height: 100px;
-    }
-
-    .photo-placeholder span {
-        font-size: 28px;
-    }
-
-    .photo-placeholder p {
-        font-size: 10px;
-    }
-
-    .tip {
-        margin-top: 15px;
-
-        padding: 10px;
-
-        line-height: 1.45;
-    }
-
-    .big-doodle {
-        font-size: 38px;
-
-        margin: 20px 0;
-    }
-
-    .cover-content {
-        padding: 15px;
-    }
-
-    .small-text {
-        font-size: 9px;
-
-        letter-spacing: 3px;
-    }
-
-    .cover h1 {
-        font-size: 34px;
-    }
-
-    .cover h2 {
-        font-size: 30px;
-    }
-
-    .cover p {
-        font-size: 11px;
-
-        line-height: 1.5;
-    }
-
-    .flower {
-        font-size: 30px;
-    }
-
-    .controls {
-        margin-top: 15px;
-
-        gap: 10px;
-    }
-
-    button {
-        padding: 9px 16px;
-
-        font-size: 12px;
-    }
-}
-
-
-/* =========================================================
-   VERY SMALL SCREENS
-========================================================= */
-
-@media (max-width: 480px) {
-
-    .book {
-        width: 94vw;
-
-        aspect-ratio: 1.52 / 1;
-    }
-
-    .paper {
-        padding: 13px;
-    }
-
-    h2 {
-        font-size: 19px;
-    }
-
-    h3 {
-        font-size: 13px;
-
-        margin-top: 8px;
-    }
-
-    p,
-    li {
-        font-size: 9px;
-    }
-
-    ul,
-    ol {
-        line-height: 1.45;
-
-        padding-left: 16px;
-    }
-
-    .photo-placeholder {
-        height: 70px;
-
-        margin-bottom: 8px;
-    }
-
-    .tip {
-        padding: 7px;
-
-        margin-top: 8px;
-    }
-
-    .page-number {
-        font-size: 9px;
-    }
 }
