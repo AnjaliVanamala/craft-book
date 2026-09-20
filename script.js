@@ -63,17 +63,17 @@ function updateBook() {
     if (currentSheet === 0) {
 
         instructions.textContent =
-            "Click the book to open it ✨";
+            "Click the book to open!";
 
     } else if (currentSheet === sheets.length) {
 
         instructions.textContent =
-            "You've reached the end! 💕";
+            "The end! 💕";
 
     } else {
 
         instructions.textContent =
-            "Click a page or use the buttons to turn it ✨";
+            "Click a page or use the buttons!";
     }
 
 
