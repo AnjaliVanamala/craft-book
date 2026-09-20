@@ -388,11 +388,15 @@ ol {
     line-height: 1.2;
 }
 
-.photo-placeholder.full img {
+.photo-placeholder img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 8px;
+}
+
+.photo-placeholder.full {
+    width: 100%;
 }
 
 .photo-placeholder.half {
