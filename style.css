@@ -402,6 +402,16 @@ ol {
     border-radius: 8px;
 }
 
+.photo-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.photo-row .photo-placeholder {
+    margin-bottom: 0;
+}
+    
 /* =========================================================
    CONTROLS
 ========================================================= */
