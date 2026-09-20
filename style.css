@@ -405,6 +405,11 @@ ol {
     vertical-align: top;
 }
 
+.photo-placeholder.big {
+    height: 300px;
+    width: 100%;
+}
+
 .photo-row {
     display: flex;
     gap: 15px;
@@ -414,7 +419,8 @@ ol {
 .photo-row .photo-placeholder {
     margin-bottom: 0;
 }
-    
+
+
 /* =========================================================
    CONTROLS
 ========================================================= */
